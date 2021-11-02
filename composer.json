@@ -1,0 +1,23 @@
+{
+    "name": "rias/statamic-address-field",
+    "autoload": {
+        "psr-4": {
+            "Rias\\StatamicAddressField\\": "src"
+        }
+    },
+    "require": {
+        "league/iso3166": "^4.0",
+        "giggsey/locale": "^2.0"
+    },
+    "extra": {
+        "statamic": {
+            "name": "Statamic Address Field",
+            "description": "A feature complete address field"
+        },
+        "laravel": {
+            "providers": [
+                "Rias\\StatamicAddressField\\ServiceProvider"
+            ]
+        }
+    }
+}

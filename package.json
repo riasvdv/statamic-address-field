@@ -1,0 +1,22 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "mix",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "production": "mix --production"
+    },
+    "devDependencies": {
+        "cross-env": "^7.0",
+        "laravel-mix": "^6.0",
+        "vue": "^2.6.11",
+        "vue-loader": "^15.9.8"
+    },
+    "dependencies": {
+        "axios": "^0.24.0",
+        "leaflet": "^1.7.1",
+        "vue2-leaflet": "^2.7.1"
+    }
+}
