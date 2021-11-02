@@ -22,6 +22,10 @@ class ServiceProvider extends AddonServiceProvider
         __DIR__ . '/../dist/js/addon.js',
     ];
 
+    protected $publishables = [
+        __DIR__ . '/../dist/images' => 'images',
+    ];
+
     public function register()
     {
         $this->mergeConfigFrom(__DIR__.'/../config/address-field.php', 'statamic.address-field');
