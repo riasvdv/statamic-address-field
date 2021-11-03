@@ -15,7 +15,7 @@ And more! Check out the [Documentation](https://statamic.com/addons/rias/address
 
 ## License
 
-Redirect requires a license to be used while on a production site.  
+Address Field requires a license to be used while on a production site.  
 You can purchase one at https://statamic.com/marketplace/addons/rias/address-field.
 
 You may use Address Field without a license while developing locally.
