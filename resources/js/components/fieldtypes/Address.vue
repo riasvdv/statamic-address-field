@@ -84,17 +84,8 @@ export default {
 
   created() {
     if (! this.value) {
-      this.value = {
-        name: '',
-        street: '',
-        street2: '',
-        postCode: '',
-        city: '',
-        state: '',
-        country: '',
-        latitude: '',
-        longitude: '',
-      };
+      this.value = {};
+      this.config.enabledFields.forEach(field => this.value[field] = '');
     }
 
     if (! this.value.country) {
