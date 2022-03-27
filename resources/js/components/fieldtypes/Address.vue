@@ -126,10 +126,6 @@ export default {
         return;
       }
 
-      if (this.value.latitude && this.value.longitude) {
-        return;
-      }
-
       if (! this.value.street || ! this.value.country) {
         return;
       }
