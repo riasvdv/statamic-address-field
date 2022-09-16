@@ -40,14 +40,16 @@
           <select-input @blur="geoCode" v-model="value.country" :options="meta.countries" id="field_country" />
         </div>
       </div>
-      <div class="flex gap-3" v-show="config.showCoordinates">
-        <div class="w-full">
-          <label for="field_latitude" class="publish-field-label" v-text="__('Latitude')"></label>
-          <text-input v-model="value.latitude" id="field_latitude" />
-        </div>
-        <div class="w-full">
-          <label for="field_longitude" class="publish-field-label" v-text="__('Longitude')"></label>
-          <text-input v-model="value.longitude" id="field_longitude" />
+      <div v-show="config.showCoordinates">
+        <div class="flex gap-3">
+          <div class="w-full">
+            <label for="field_latitude" class="publish-field-label" v-text="__('Latitude')"></label>
+            <text-input v-model="value.latitude" id="field_latitude" />
+          </div>
+          <div class="w-full">
+            <label for="field_longitude" class="publish-field-label" v-text="__('Longitude')"></label>
+            <text-input v-model="value.longitude" id="field_longitude" />
+          </div>
         </div>
       </div>
     </fieldset>
