@@ -4,6 +4,7 @@ namespace Rias\StatamicAddressField\Fieldtypes;
 
 use Rias\StatamicAddressField\AddressData;
 use Rias\StatamicAddressField\Countries;
+use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fieldtype;
 
 class Address extends Fieldtype
@@ -88,5 +89,10 @@ class Address extends Fieldtype
                 'width' => 50,
             ],
         ];
+    }
+
+    public function toGqlType()
+    {
+        return GraphQL::type('AddressData');
     }
 }

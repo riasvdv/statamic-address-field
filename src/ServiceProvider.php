@@ -2,7 +2,9 @@
 
 namespace Rias\StatamicAddressField;
 
+use Rias\StatamicAddressField\GraphQL\Types\AddressDataType;
 use Statamic\Providers\AddonServiceProvider;
+use Statamic\Facades\GraphQL;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -33,5 +35,12 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../config/address-field.php' => config_path('statamic/address-field.php'),
         ], 'statamic-address-field-config');
+    }
+
+    public function bootAddon()
+    {
+        if (config('statamic.graphql.enabled')) {
+            GraphQL::addType(AddressDataType::class);
+        }
     }
 }
