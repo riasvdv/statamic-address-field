@@ -30,10 +30,10 @@ class ServiceProvider extends AddonServiceProvider
 
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/address-field.php', 'statamic.address-field');
+        $this->mergeConfigFrom(__DIR__.'/../config/address-field.php', 'statamic.address-field');
 
         $this->publishes([
-            __DIR__ . '/../config/address-field.php' => config_path('statamic/address-field.php'),
+            __DIR__.'/../config/address-field.php' => config_path('statamic/address-field.php'),
         ], 'statamic-address-field-config');
     }
 
