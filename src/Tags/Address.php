@@ -52,6 +52,7 @@ class Address extends Tags
 
         return <<<HTML
             <iframe
+              title="Google Maps"
               width="{$this->params->get('width', 640)}"
               height="{$this->params->get('height', 640)}"
               style="border:0"
