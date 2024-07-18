@@ -58,6 +58,14 @@ This tag allows you to loop over all available countries, which can be useful fo
 {{ /address:countries }}
 ```
 
+### Modifier
+
+This addon also comes with a modifier `{{ value | country_name }}` that transforms a country by its 2 letter code to the full name:
+
+```antlers
+{{ 'be' | country_name }} <!-- Output: Belgium -->
+```
+
 ### Fieldtype
 
 This addon comes with a fieldtype that allows users to enter a full address. The fieldtype itself is configurable in which fields are shown to the user:
