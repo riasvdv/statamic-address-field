@@ -57,7 +57,6 @@
 
 <script>
 import { Icon } from "leaflet";
-import axios from "axios";
 
 const markerIcon = new Icon.Default({
   imagePath: '/vendor/statamic-address-field/images/',
@@ -141,7 +140,7 @@ export default {
       if (this.value.country) url+= `%2C${this.value.country}`;
 
       const self = this;
-      axios.get(`${url}&format=jsonv2`)
+      this.$axios.get(`${url}&format=jsonv2`)
           .then((response) => {
             if (response.status !== 200) {
               return;
