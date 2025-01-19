@@ -18,7 +18,17 @@ class Address extends Fieldtype
      */
     public function defaultValue()
     {
-        return null;
+        return [
+            'name' => null,
+            'street' => null,
+            'street2' => null,
+            'postCode' => null,
+            'city' => null,
+            'state' => null,
+            'country' => null,
+            'latitude' => null,
+            'longitude' => null,
+        ];
     }
 
     public function preProcessIndex($data)
