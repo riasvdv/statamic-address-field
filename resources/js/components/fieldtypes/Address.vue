@@ -57,7 +57,6 @@
 
 <script>
 import { Icon } from "leaflet";
-import axios from "axios";
 
 const markerIcon = new Icon.Default({
   imagePath: '/vendor/statamic-address-field/images/',
@@ -81,6 +80,13 @@ export default {
             markerLatLng: [51.504, -0.159],
             markerIcon: markerIcon,
           },
+          axiosConfig: {
+            headers: {
+              'x-requested-with': null,
+              'x-csrf-token': null
+            },
+            withCredentials: false
+          }
       };
   },
 
@@ -123,6 +129,17 @@ export default {
         this.$refs.map.mapObject.invalidateSize();
       }, 250);
     },
+    getQueryString: function() {
+      let queryString = this.value.street;
+
+      if (this.value.street2) queryString+= `+${this.value.street2}`;
+      if (this.value.postCode) queryString+= `%2C${this.value.postCode}`;
+      if (this.value.city) queryString+= `${this.value.postCode ? '+' : '%2C'}${this.value.city}`;
+      if (this.value.state) queryString+= `${this.value.postCode || this.value.city ? '+' : '%2C'}${this.value.state}`;
+      if (this.value.country) queryString+= `%2C${this.value.country}`;
+
+      return queryString;
+    },
     geoCode: function() {
       if (! this.config.geoCode) {
         return;
@@ -132,16 +149,42 @@ export default {
         return;
       }
 
-      let url = `https://nominatim.openstreetmap.org/search.php?q=${this.value.street}`;
+      if(this.config.useGoogleForGeocoding) {
+        if(!this.meta.googleApiKey) {
+          console.error('Google API key is not set. Either set the key or disable Google for geocoding.');
+          return;
+        }
 
-      if (this.value.street2) url+= `+${this.value.street2}`;
-      if (this.value.postCode) url+= `%2C${this.value.postCode}`;
-      if (this.value.city) url+= `${this.value.postCode ? '+' : '%2C'}${this.value.city}`;
-      if (this.value.state) url+= `${this.value.postCode || this.value.city ? '+' : '%2C'}${this.value.state}`;
-      if (this.value.country) url+= `%2C${this.value.country}`;
+        this.googleGeocode();
+      } else {
+        this.nominatimGeocode();
+      }
+    },
+    googleGeocode: function() {
+      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${this.getQueryString()}`;
 
-      const self = this;
-      axios.get(`${url}&format=jsonv2`)
+      this.$axios.get(`${url}&key=${this.meta.googleApiKey}`, this.axiosConfig)
+          .then((response) => {
+            if (response.status !== 200) {
+              return;
+            }
+
+            if (! response.data?.results?.length > 0) {
+              return;
+            }
+
+            const result = response.data.results[0];
+
+            this.value.latitude = result.geometry.location.lat;
+            this.value.longitude = result.geometry.location.lng;
+            this.map.markerLatLng = [result.geometry.location.lat, result.geometry.location.lng];
+            this.map.center = [result.geometry.location.lat, result.geometry.location.lng];
+          });
+    },
+    nominatimGeocode: function() {
+      const url = `https://nominatim.openstreetmap.org/search.php?q=${this.getQueryString()}`;
+
+      this.$axios.get(`${url}&format=jsonv2`, this.axiosConfig)
           .then((response) => {
             if (response.status !== 200) {
               return;
@@ -153,10 +196,10 @@ export default {
 
             const result = response.data[0];
 
-            self.value.latitude = result.lat;
-            self.value.longitude = result.lon;
-            self.map.markerLatLng = [result.lat, result.lon];
-            self.map.center = [result.lat, result.lon];
+            this.value.latitude = result.lat;
+            this.value.longitude = result.lon;
+            this.map.markerLatLng = [result.lat, result.lon];
+            this.map.center = [result.lat, result.lon];
           });
     },
   }

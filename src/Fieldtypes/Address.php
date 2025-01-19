@@ -34,12 +34,13 @@ class Address extends Fieldtype
             'countries' => collect(Countries::toArray())->map(function ($country) {
                 return ['value' => $country['alpha2'], 'label' => $country['display']];
             })->toArray(),
+            'googleApiKey' => config('statamic.address-field.google_maps_api_key'),
         ];
     }
 
     public function configFieldItems(): array
     {
-        return [
+        $fields = [
             'enabledFields' => [
                 'display' => __('Enabled fields'),
                 'type' => 'select',
@@ -89,6 +90,17 @@ class Address extends Fieldtype
                 'width' => 50,
             ],
         ];
+
+        if (config('statamic.address-field.google_maps_api_key')) {
+            $fields['useGoogleForGeocoding'] = [
+                'display' => __('Use Google for geocoding'),
+                'type' => 'toggle',
+                'default' => false,
+                'width' => 50,
+            ];
+        }
+
+        return $fields;
     }
 
     public function toGqlType()
