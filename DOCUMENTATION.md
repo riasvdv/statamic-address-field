@@ -91,6 +91,8 @@ Available configuration:
   - Whether to geocode the address to lat/lng coordinates `true`/`false`
 - showCoordinates
   - Whether to show the latitude & longitude fields `true`/`false`
+- showMapByDefault
+  - If set to `true`, the map will be shown by default when editing the address fields `true`/`false`
 
 ### Displaying a static map
 

@@ -104,6 +104,10 @@ export default {
       this.map.markerLatLng = [this.value.latitude, this.value.longitude];
       this.map.center = [this.value.latitude, this.value.longitude];
     }
+
+    if (this.config.showMapByDefault) {
+        this.showMap = true;
+    }
   },
 
   watch: {
@@ -119,15 +123,18 @@ export default {
           this.value.latitude = newValue.lat;
           this.value.longitude = newValue.lng;
         }
+      },
+
+      'showMap': function () {
+          setTimeout(() => {
+              this.$refs.map.mapObject.invalidateSize();
+          }, 250);
       }
   },
 
   methods: {
     toggleMap: function () {
       this.showMap = !this.showMap;
-      setTimeout(() => {
-        this.$refs.map.mapObject.invalidateSize();
-      }, 250);
     },
     getQueryString: function() {
       let queryString = this.value.street;
