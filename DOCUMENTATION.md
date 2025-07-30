@@ -91,6 +91,10 @@ Available configuration:
   - Whether to geocode the address to lat/lng coordinates `true`/`false`
 - showCoordinates
   - Whether to show the latitude & longitude fields `true`/`false`
+- defaultCoordinates
+  - Can be set to a specific latitude & longitude in order to set the default map center `null` / `{ latitude: number, longitude: number }`
+- defaultZoom
+  - Can be set to a specific zoom level for the map. Defaults to `15` if not set.
 
 ### Displaying a static map
 
