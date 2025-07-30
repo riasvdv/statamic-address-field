@@ -12,7 +12,7 @@
           :center="map.center"
       >
         <l-tile-layer :url="map.url" :attribution="map.attribution"></l-tile-layer>
-        <l-marker :lat-lng.sync="map.markerLatLng" :icon="map.markerIcon" :draggable="!isReadOnly"></l-marker>
+        <l-marker :lat-lng.sync="map.markerLatLng" :icon="map.markerIcon" :draggable="!isReadOnly" :opacity="markerIsAtDefaultLocation ? 0.5 : 1.0"></l-marker>
       </l-map>
       <div class="w-full field-inner" v-if="config.enabledFields.includes('name')">
         <label for="field_name" class="publish-field-label" v-text="__('Name')"></label>
@@ -77,13 +77,14 @@ export default {
   data() {
       return {
           showMap: false,
+          defaultCoordinates: { latitude: 51.504, longitude: -0.159 },
           map: {
             url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             attribution:
                 '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
             zoom: 15,
-            center: [51.505, -0.159],
-            markerLatLng: [51.504, -0.159],
+            center: [],
+            markerLatLng: [],
             markerIcon: markerIcon,
           },
           axiosConfig: {
@@ -106,9 +107,27 @@ export default {
       this.value.country = this.config.defaultCountry;
     }
 
+    if (this.config.defaultCoordinates?.latitude) {
+        this.defaultCoordinates.latitude = this.config.defaultCoordinates.latitude;
+    }
+    if (this.config.defaultCoordinates?.longitude) {
+        this.defaultCoordinates.longitude = this.config.defaultCoordinates.longitude;
+    }
+
     if (this.value.latitude && this.value.longitude) {
       this.map.markerLatLng = [this.value.latitude, this.value.longitude];
       this.map.center = [this.value.latitude, this.value.longitude];
+    } else {
+      this.map.markerLatLng = [this.defaultCoordinates.latitude, this.defaultCoordinates.longitude];
+      this.map.center = [this.defaultCoordinates.latitude, this.defaultCoordinates.longitude];
+    }
+
+    if (this.config.defaultZoom) {
+        this.map.zoom = this.config.defaultZoom;
+    }
+
+    if (this.config.showMapByDefault) {
+        this.showMap = true;
     }
   },
 
@@ -125,15 +144,25 @@ export default {
           this.value.latitude = newValue.lat;
           this.value.longitude = newValue.lng;
         }
-      }
+      },
+
+      'showMap': function () {
+        setTimeout(() => {
+          this.$refs.map.mapObject.invalidateSize();
+        }, 250);
+      },
+  },
+
+  computed: {
+    markerIsAtDefaultLocation() {
+      return this.map.markerLatLng[0] === this.defaultCoordinates.latitude &&
+        this.map.markerLatLng[1] === this.defaultCoordinates.longitude;
+    },
   },
 
   methods: {
     toggleMap: function () {
       this.showMap = !this.showMap;
-      setTimeout(() => {
-        this.$refs.map.mapObject.invalidateSize();
-      }, 250);
     },
     getQueryString: function() {
       let queryString = this.value.street;
