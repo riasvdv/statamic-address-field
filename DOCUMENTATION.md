@@ -93,6 +93,10 @@ Available configuration:
   - Whether to show the latitude & longitude fields `true`/`false`
 - showMapByDefault
   - If set to `true`, the map will be shown by default when editing the address fields `true`/`false`
+- defaultCoordinates
+  - Can be set to a specific latitude & longitude in order to set the default map center `null` / `{ latitude: number, longitude: number }`
+- defaultZoom
+  - Can be set to a specific zoom level for the map. Defaults to `15` if not set.
 
 ### Displaying a static map
 
