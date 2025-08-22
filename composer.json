@@ -8,8 +8,10 @@
     "require": {
         "league/iso3166": "^4.0",
         "giggsey/locale": "^2.0",
-        "statamic/cms": "^3.0|^4.0|^5.0"
+        "statamic/cms": "^6.0"
     },
+    "minimum-stability": "dev",
+    "prefer-table": true,
     "extra": {
         "statamic": {
             "name": "Statamic Address Field",

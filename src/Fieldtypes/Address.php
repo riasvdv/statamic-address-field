@@ -43,7 +43,7 @@ class Address extends Fieldtype
         return [
             'countries' => collect(Countries::toArray())->map(function ($country) {
                 return ['value' => $country['alpha2'], 'label' => $country['display']];
-            })->toArray(),
+            })->values()->all(),
             'googleApiKey' => config('statamic.address-field.google_maps_api_key'),
         ];
     }
@@ -95,6 +95,13 @@ class Address extends Fieldtype
 
             'showCoordinates' => [
                 'display' => __('Show coordinates'),
+                'type' => 'toggle',
+                'default' => false,
+                'width' => 50,
+            ],
+
+            'showMapByDefault' => [
+                'display' => __('Show map by default'),
                 'type' => 'toggle',
                 'default' => false,
                 'width' => 50,

@@ -20,8 +20,12 @@ class ServiceProvider extends AddonServiceProvider
         Fieldtypes\Address::class,
     ];
 
-    protected $scripts = [
-        __DIR__ . '/../dist/js/addon.js',
+    protected $vite = [
+        'input' => [
+            'resources/js/cp.js',
+        ],
+        'publicDirectory' => 'dist',
+        'hotFile' => __DIR__.'/../dist/hot',
     ];
 
     protected $publishables = [
