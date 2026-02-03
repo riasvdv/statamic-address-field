@@ -24,8 +24,8 @@ class ServiceProvider extends AddonServiceProvider
         'input' => [
             'resources/js/cp.js',
         ],
-        'publicDirectory' => 'dist',
-        'hotFile' => __DIR__.'/../dist/hot',
+        'publicDirectory' => 'resources/dist',
+        'hotFile' => __DIR__.'/../resources/dist/hot',
     ];
 
     protected $publishables = [

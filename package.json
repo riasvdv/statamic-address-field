@@ -6,7 +6,8 @@
         "format": "prettier 'resources/**/*.{css,js,json,css,ts,tsx,vue}' '*.{js,css}' --write"
     },
     "dependencies": {
-        "leaflet": "^1.9.4"
+        "leaflet": "^1.9.4",
+        "lodash.debounce": "^4.0.8"
     },
     "devDependencies": {
         "@statamic/cms": "file:./vendor/statamic/cms/resources/js/package",

@@ -102,7 +102,7 @@
       ></label>
       <Input
         type="text"
-        @blur="geoCode"
+        @update:modelValue="geoCode"
         v-model="value.name"
         id="field_name"
         :disabled="isReadOnly"
@@ -119,7 +119,7 @@
       ></label>
       <Input
         type="text"
-        @blur="geoCode"
+        @update:modelValue="geoCode"
         v-model="value.street"
         id="field_street"
         :disabled="isReadOnly"
@@ -136,7 +136,7 @@
       ></label>
       <Input
         type="text"
-        @blur="geoCode"
+        @update:modelValue="geoCode"
         v-model="value.street2"
         id="field_street2"
         :disabled="isReadOnly"
@@ -154,7 +154,7 @@
         ></label>
         <Input
           type="text"
-          @blur="geoCode"
+          @update:modelValue="geoCode"
           v-model="value.postCode"
           id="field_postCode"
           :disabled="isReadOnly"
@@ -171,7 +171,7 @@
         ></label>
         <Input
           type="text"
-          @blur="geoCode"
+          @update:modelValue="geoCode"
           v-model="value.city"
           id="field_city"
           :disabled="isReadOnly"
@@ -190,7 +190,7 @@
         ></label>
         <Input
           type="text"
-          @blur="geoCode"
+          @update:modelValue="geoCode"
           v-model="value.state"
           id="field_state"
           :disabled="isReadOnly"
@@ -206,7 +206,7 @@
           v-text="__('Country')"
         ></label>
         <Select
-          @blur="geoCode"
+          @update:modelValue="geoCode"
           v-model="value.country"
           :options="meta.countries"
           id="field_country"
@@ -254,6 +254,7 @@ import "leaflet/dist/leaflet.css";
 import { FieldtypeMixin } from "@statamic/cms";
 import { Input, Select, Field } from "@statamic/cms/ui";
 import L from "leaflet";
+import debounce from "lodash.debounce";
 
 L.Icon.Default.prototype.options.imagePath =
   "/vendor/statamic-address-field/images/";
@@ -398,7 +399,7 @@ export default {
 
       return queryString;
     },
-    geoCode: function () {
+    geoCode: debounce(function () {
       if (!this.config.geoCode) {
         return;
       }
@@ -419,7 +420,7 @@ export default {
       } else {
         this.nominatimGeocode();
       }
-    },
+    }, 500),
     googleGeocode: function () {
       const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${this.getQueryString()}`;
 
