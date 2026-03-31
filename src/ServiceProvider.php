@@ -29,7 +29,7 @@ class ServiceProvider extends AddonServiceProvider
     ];
 
     protected $publishables = [
-        __DIR__ . '/../dist/images' => 'images',
+        __DIR__ . '/../resources/dist/images' => 'images',
     ];
 
     public function register()
