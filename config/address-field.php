@@ -8,6 +8,23 @@ return [
     'google_maps_api_key' => env('GOOGLE_MAPS_API_KEY'),
 
     /**
+     * The default map center used in the control panel fieldtype when
+     * an address does not have coordinates yet.
+     */
+    'default_coordinates' => null,
+
+    /**
+     * The default marker location used in the control panel fieldtype when
+     * an address does not have coordinates yet. Falls back to the map center.
+     */
+    'default_marker_coordinates' => null,
+
+    /**
+     * The default map zoom used in the control panel fieldtype.
+     */
+    'default_zoom' => 15,
+
+    /**
      * The default marker color for displaying map markers.
      */
     'defaultMarkerColor' => '#E50000',
