@@ -274,6 +274,8 @@ export default {
       defaultCoordinates: { latitude: 51.504, longitude: -0.159 },
       mapInstance: null,
       marker: null,
+      intersectionObserver: null,
+      invalidateSizeTimeouts: [],
       map: {
         zoom: 15,
         center: [],
@@ -329,6 +331,26 @@ export default {
 
   mounted() {
     this.initMap();
+    this.$refs.map.addEventListener("transitionend", this.invalidateMapSize);
+    window.addEventListener("resize", this.invalidateMapSize);
+
+    if ("IntersectionObserver" in window) {
+      this.intersectionObserver = new IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          this.scheduleInvalidateMapSize();
+        }
+      });
+      this.intersectionObserver.observe(this.$refs.map);
+    }
+
+    this.scheduleInvalidateMapSize();
+  },
+
+  beforeUnmount() {
+    this.$refs.map?.removeEventListener("transitionend", this.invalidateMapSize);
+    window.removeEventListener("resize", this.invalidateMapSize);
+    this.intersectionObserver?.disconnect();
+    this.invalidateSizeTimeouts.forEach((timeout) => clearTimeout(timeout));
   },
 
   watch: {
@@ -357,17 +379,18 @@ export default {
     },
 
     showMap: function () {
-      this.$nextTick(() => {
-        this.mapInstance.invalidateSize();
-      });
+      this.scheduleInvalidateMapSize();
     },
   },
 
   methods: {
     initMap() {
-      this.mapInstance = L.map("map").setView(this.map.center, this.map.zoom);
+      this.mapInstance = L.map(this.$refs.map).setView(
+        this.map.center,
+        this.map.zoom,
+      );
 
-      L.tileLayer("http://{s}.tile.osm.org/{z}/{x}/{y}.png", {
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution:
           '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>',
@@ -385,6 +408,26 @@ export default {
     },
     toggleMap() {
       this.showMap = !this.showMap;
+    },
+    scheduleInvalidateMapSize() {
+      this.invalidateSizeTimeouts.forEach((timeout) => clearTimeout(timeout));
+
+      this.$nextTick(() => {
+        this.invalidateMapSize();
+
+        this.invalidateSizeTimeouts = [50, 250, 300].map((delay) =>
+          setTimeout(this.invalidateMapSize, delay),
+        );
+      });
+    },
+    invalidateMapSize() {
+      if (!this.mapInstance || !this.showMap || !this.$refs.map?.offsetHeight) {
+        return;
+      }
+
+      requestAnimationFrame(() => {
+        this.mapInstance?.invalidateSize();
+      });
     },
     getQueryString() {
       let queryString = this.value.street;
