@@ -272,6 +272,7 @@ export default {
     return {
       showMap: false,
       defaultCoordinates: { latitude: 51.504, longitude: -0.159 },
+      defaultMarkerCoordinates: null,
       mapInstance: null,
       marker: null,
       intersectionObserver: null,
@@ -301,22 +302,29 @@ export default {
       this.value.country = this.config.defaultCountry;
     }
 
-    if (this.config.defaultCoordinates?.latitude) {
-      this.defaultCoordinates.latitude =
-        this.config.defaultCoordinates.latitude;
-    }
-    if (this.config.defaultCoordinates?.longitude) {
-      this.defaultCoordinates.longitude =
-        this.config.defaultCoordinates.longitude;
-    }
+    this.defaultCoordinates =
+      this.getConfiguredCoordinates(this.config.defaultCoordinates) ??
+      this.defaultCoordinates;
 
-    if (this.value.latitude && this.value.longitude) {
-      this.map.markerLatLng = [this.value.latitude, this.value.longitude];
-      this.map.center = [this.value.latitude, this.value.longitude];
+    this.defaultMarkerCoordinates =
+      this.getConfiguredCoordinates(this.config.defaultMarkerCoordinates) ??
+      this.defaultCoordinates;
+
+    const addressCoordinates = this.getConfiguredCoordinates(this.value);
+
+    if (addressCoordinates) {
+      this.map.markerLatLng = [
+        addressCoordinates.latitude,
+        addressCoordinates.longitude,
+      ];
+      this.map.center = [
+        addressCoordinates.latitude,
+        addressCoordinates.longitude,
+      ];
     } else {
       this.map.markerLatLng = [
-        this.defaultCoordinates.latitude,
-        this.defaultCoordinates.longitude,
+        this.defaultMarkerCoordinates.latitude,
+        this.defaultMarkerCoordinates.longitude,
       ];
       this.map.center = [
         this.defaultCoordinates.latitude,
@@ -324,7 +332,10 @@ export default {
       ];
     }
 
-    if (this.config.defaultZoom) this.map.zoom = this.config.defaultZoom;
+    const defaultZoom = Number(this.config.defaultZoom);
+    if (Number.isFinite(defaultZoom)) {
+      this.map.zoom = defaultZoom;
+    }
     if (this.config.showMapByDefault || this.meta.showMapByDefault)
       this.showMap = true;
   },
@@ -408,6 +419,38 @@ export default {
     },
     toggleMap() {
       this.showMap = !this.showMap;
+    },
+    getConfiguredCoordinates(coordinates) {
+      if (!coordinates) {
+        return null;
+      }
+
+      const { latitude, longitude } = coordinates;
+
+      if (
+        latitude === null ||
+        latitude === undefined ||
+        latitude === "" ||
+        longitude === null ||
+        longitude === undefined ||
+        longitude === ""
+      ) {
+        return null;
+      }
+
+      const parsedCoordinates = {
+        latitude: Number(latitude),
+        longitude: Number(longitude),
+      };
+
+      if (
+        !Number.isFinite(parsedCoordinates.latitude) ||
+        !Number.isFinite(parsedCoordinates.longitude)
+      ) {
+        return null;
+      }
+
+      return parsedCoordinates;
     },
     scheduleInvalidateMapSize() {
       this.invalidateSizeTimeouts.forEach((timeout) => clearTimeout(timeout));

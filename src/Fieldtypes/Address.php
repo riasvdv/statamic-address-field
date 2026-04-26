@@ -106,6 +106,60 @@ class Address extends Fieldtype
                 'default' => false,
                 'width' => 50,
             ],
+            'defaultCoordinates' => [
+                'display' => __('Default map center'),
+                'instructions' => __('Set the default latitude and longitude used to center the map when the address has no coordinates.'),
+                'type' => 'group',
+                'default' => config('statamic.address-field.default_coordinates'),
+                'fields' => [
+                    [
+                        'handle' => 'latitude',
+                        'field' => [
+                            'display' => __('Latitude'),
+                            'type' => 'float',
+                            'width' => 50,
+                        ],
+                    ],
+                    [
+                        'handle' => 'longitude',
+                        'field' => [
+                            'display' => __('Longitude'),
+                            'type' => 'float',
+                            'width' => 50,
+                        ],
+                    ],
+                ],
+            ],
+            'defaultMarkerCoordinates' => [
+                'display' => __('Default marker location'),
+                'instructions' => __('Set a different default latitude and longitude for the marker. Leave empty to use the default map center.'),
+                'type' => 'group',
+                'default' => config('statamic.address-field.default_marker_coordinates'),
+                'fields' => [
+                    [
+                        'handle' => 'latitude',
+                        'field' => [
+                            'display' => __('Latitude'),
+                            'type' => 'float',
+                            'width' => 50,
+                        ],
+                    ],
+                    [
+                        'handle' => 'longitude',
+                        'field' => [
+                            'display' => __('Longitude'),
+                            'type' => 'float',
+                            'width' => 50,
+                        ],
+                    ],
+                ],
+            ],
+            'defaultZoom' => [
+                'display' => __('Default zoom'),
+                'type' => 'integer',
+                'default' => config('statamic.address-field.default_zoom', 15),
+                'width' => 50,
+            ],
         ];
 
         if (config('statamic.address-field.google_maps_api_key')) {
