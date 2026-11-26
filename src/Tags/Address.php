@@ -38,14 +38,31 @@ class Address extends Tags
 
         $params = $this->params->except(['address', 'type', 'width', 'height'])->toArray();
 
-        if ($this->params->get('type') === 'directions') {
-            $params['origin'] ??= 'current+location';
-            $params['destination'] ??= $data->toString();
-        } else {
-            $params['q'] = $data->toString();
+        $coordinates = $data->latitude !== null && $data->longitude !== null
+            ? "{$data->latitude},{$data->longitude}"
+            : null;
+
+        switch ($this->params->get('type', 'place')) {
+            case 'directions':
+                $params['origin'] ??= 'current+location';
+                $params['destination'] ??= $coordinates ?? $data->toString();
+                break;
+            case 'view':
+                $params['center'] ??= $coordinates;
+                break;
+            case 'streetview':
+                $params['location'] ??= $coordinates;
+                break;
+            case 'search':
+                $params['q'] ??= $data->toString();
+                break;
+            default:
+                $params['q'] ??= $coordinates ?? $data->toString();
         }
 
-        $params['zoom'] ??= 14;
+        if ($this->params->get('type') !== 'streetview') {
+            $params['zoom'] ??= 14;
+        }
 
         $query = http_build_query($params);
         $url .= "&" . $query;

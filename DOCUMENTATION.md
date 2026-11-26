@@ -145,14 +145,22 @@ You can also display a dynamic embedded map using the tag.
 
 #### Parameters
 
-The `q`, `origin` & `destination` parameters will be set depending on the `type` of map, you can still override them manually as well.
+The `q`, `origin`, `destination`, `center` & `location` parameters are set from the address depending on the `type` of map. When the address has a latitude and longitude, the map uses those coordinates, otherwise it uses the address text. The `search` type always uses the address text. You can still override any of these parameters manually.
+
+| Type         | Parameter set from the address                    |
+|--------------|---------------------------------------------------|
+| `place`      | `q`: the coordinates, or the address text         |
+| `directions` | `destination`: the coordinates, or the address text |
+| `view`       | `center`: the coordinates                         |
+| `streetview` | `location`: the coordinates                       |
+| `search`     | `q`: the address text                             |
 
 | Parameter | Description                                                                                    | Default           |
 |-----------|------------------------------------------------------------------------------------------------|-------------------|
 | address   | The address data from the fieldtype                                                            | `null` (required) |
 | type      | The type of embedded map, can be one of `place`, `directions`, `view`, `streetview`, `search`  | `place`           |
 | maptype   | The tiles to load, can be one of `roadmap` or `satellite`                                      | `roadmap`         |
-| zoom      | The map zoom                                                                                   | `14`              |
+| zoom      | The map zoom, not used by the `streetview` type                                                | `14`              |
 
 For more information, and all available parameters depending on `type` you can view [https://developers.google.com/maps/documentation/embed/embedding-map](https://developers.google.com/maps/documentation/embed/embedding-map)
 
