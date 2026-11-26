@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Installs PHP, Composer, and the addon's Composer and npm dependencies.
+# npm needs vendor/ first: @statamic/cms is a file: dependency inside vendor/statamic/cms.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+step() {
+  echo "==> $1"
+  SECONDS=0
+}
+done_step() {
+  echo "    took ${SECONDS}s"
+}
+
+apt_packages=(php-cli php-xml php-mbstring php-curl php-zip php-intl php-gd php-sqlite3 composer unzip)
+missing=()
+for pkg in "${apt_packages[@]}"; do
+  dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed" || missing+=("$pkg")
+done
+if ((${#missing[@]})); then
+  step "apt-get install ${missing[*]}"
+  sudo apt-get update -qq
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends "${missing[@]}"
+  done_step
+fi
+
+step "composer install"
+composer install --no-interaction --no-progress --prefer-dist
+done_step
+
+step "npm ci"
+npm ci --no-audit --no-fund
+done_step
