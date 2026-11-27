@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 # Installs PHP, Composer, and the addon's Composer and npm dependencies.
+# composer.lock needs PHP 8.4 (Symfony 8), so PHP comes from the Sury repository
+# and Composer from getcomposer.org; Debian 12 ships PHP 8.2 and Composer 2.5.
 # npm needs vendor/ first: @statamic/cms is a file: dependency inside vendor/statamic/cms.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
+
+PHP_VERSION=8.4
 
 step() {
   echo "==> $1"
@@ -13,7 +17,20 @@ done_step() {
   echo "    took ${SECONDS}s"
 }
 
-apt_packages=(php-cli php-xml php-mbstring php-curl php-zip php-intl php-gd php-sqlite3 composer unzip)
+if [[ ! -f /etc/apt/sources.list.d/sury-php.list ]]; then
+  step "add Sury PHP repository"
+  sudo apt-get update -qq
+  sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends ca-certificates curl lsb-release
+  sudo curl -fsSL -o /usr/share/keyrings/sury-php.gpg https://packages.sury.org/php/apt.gpg
+  echo "deb [signed-by=/usr/share/keyrings/sury-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" |
+    sudo tee /etc/apt/sources.list.d/sury-php.list >/dev/null
+  done_step
+fi
+
+apt_packages=(unzip)
+for ext in cli xml mbstring curl zip intl gd sqlite3; do
+  apt_packages+=("php${PHP_VERSION}-${ext}")
+done
 missing=()
 for pkg in "${apt_packages[@]}"; do
   dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null | grep -q "install ok installed" || missing+=("$pkg")
@@ -24,9 +41,20 @@ if ((${#missing[@]})); then
   sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends "${missing[@]}"
   done_step
 fi
+sudo update-alternatives --set php "/usr/bin/php${PHP_VERSION}"
+
+if ! /usr/local/bin/composer --version >/dev/null 2>&1; then
+  step "install Composer"
+  tmp=$(mktemp -d)
+  curl -fsSL -o "$tmp/composer.phar" https://getcomposer.org/download/latest-stable/composer.phar
+  echo "$(curl -fsSL https://getcomposer.org/download/latest-stable/composer.phar.sha256)  $tmp/composer.phar" | sha256sum -c --quiet
+  sudo install -m 755 "$tmp/composer.phar" /usr/local/bin/composer
+  rm -rf "$tmp"
+  done_step
+fi
 
 step "composer install"
-composer install --no-interaction --no-progress --prefer-dist
+/usr/local/bin/composer install --no-interaction --no-progress --prefer-dist
 done_step
 
 step "npm ci"
